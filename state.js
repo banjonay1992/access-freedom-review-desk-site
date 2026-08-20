@@ -27,6 +27,10 @@ export function isPasswordSetupUrl(value) {
   }
 }
 
+export function shouldShowPasswordSetup(event, url) {
+  return event === 'PASSWORD_RECOVERY' || isPasswordSetupUrl(url);
+}
+
 export function queueSummary(rows) {
   return rows.reduce((summary, row) => {
     summary.places += 1;
