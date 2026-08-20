@@ -22,6 +22,10 @@ export async function updatePassword(password) {
   return unwrap(await supabase.auth.updateUser({ password }));
 }
 
+export async function requestPasswordReset(email, redirectTo) {
+  return unwrap(await supabase.auth.resetPasswordForEmail(email, { redirectTo }));
+}
+
 export async function getSession() {
   const { data, error } = await supabase.auth.getSession();
   if (error) throw error;
