@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#132733" />
+    <title>Access Freedom — Review desk</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='31' fill='%23132733'/%3E%3Ctext x='32' y='39' text-anchor='middle' font-family='Georgia' font-size='24' fill='%23d7a547'%3EAF%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main id="login-screen" class="login-screen">
+      <section class="login-card" aria-labelledby="login-title">
+        <div class="brand-lockup"><span class="brand-mark">AF</span><span>Access Freedom</span></div>
+        <section id="sign-in-panel">
+        <p class="eyebrow">Private review desk</p>
+        <h1 id="login-title">Check every claim<br />before it reaches the map.</h1>
+        <p class="login-copy">Sign in with an appointed moderator account. Imported places and Luna findings stay private until you approve them.</p>
+        <form id="login-form" class="login-form">
+          <label>Email<input id="email" type="email" autocomplete="email" required /></label>
+          <label>Password<input id="password" type="password" autocomplete="current-password" required /></label>
+          <button class="button primary wide" type="submit">Sign in securely</button>
+          <p id="login-error" class="form-error" role="alert"></p>
+        </form>
+        </section>
+        <section id="password-setup-panel" class="hidden">
+          <p class="eyebrow">Administrator invitation</p>
+          <h1>Choose your secure password.</h1>
+          <p class="login-copy">Your invitation has been verified. Create the password you’ll use for the private review desk.</p>
+          <form id="password-setup-form" class="login-form">
+            <label>New password<input id="new-password" type="password" autocomplete="new-password" minlength="12" required /></label>
+            <label>Confirm password<input id="confirm-password" type="password" autocomplete="new-password" minlength="12" required /></label>
+            <button class="button primary wide" type="submit">Save password and continue</button>
+            <p id="password-setup-error" class="form-error" role="alert"></p>
+          </form>
+        </section>
+      </section>
+      <aside class="login-art" aria-hidden="true">
+        <div class="orb orb-one"></div><div class="orb orb-two"></div>
+        <div class="quote-card"><span>Evidence first</span><p>Clear access facts, their source, and the date they were checked.</p></div>
+      </aside>
+    </main>
+
+    <main id="dashboard" class="dashboard hidden">
+      <aside class="sidebar">
+        <div class="brand-lockup light"><span class="brand-mark">AF</span><span>Access Freedom</span></div>
+        <div class="sidebar-section">
+          <p class="sidebar-label">Review desk</p>
+          <button class="nav-item active"><span class="nav-icon">◫</span> Research queue <span id="nav-count" class="nav-count">0</span></button>
+          <button class="nav-item" disabled><span class="nav-icon">◎</span> Published places</button>
+          <button class="nav-item" disabled><span class="nav-icon">⚑</span> Reports</button>
+        </div>
+        <div class="sidebar-foot">
+          <div class="staff-card"><span id="staff-initials" class="avatar">AF</span><div><strong id="staff-email">Moderator</strong><span id="staff-role">Staff</span></div></div>
+          <button id="sign-out" class="text-button">Sign out</button>
+        </div>
+      </aside>
+
+      <section class="workspace">
+        <header class="topbar">
+          <div><p class="eyebrow">Cornwall pilot</p><h1>Research review</h1></div>
+          <div class="connection-pill"><span></span> Live database</div>
+        </header>
+
+        <section class="summary-grid" aria-label="Queue summary">
+          <article><span>Places shown</span><strong id="summary-places">0</strong></article>
+          <article><span>Claims to check</span><strong id="summary-pending">0</strong></article>
+          <article><span>Contradictions</span><strong id="summary-conflicts">0</strong></article>
+          <article><span>Ready for a draft</span><strong id="summary-ready">0</strong></article>
+        </section>
+
+        <section class="queue-layout">
+          <section class="queue-panel">
+            <div class="queue-tools">
+              <label class="search-box"><span>⌕</span><input id="queue-search" type="search" placeholder="Search places" /></label>
+              <button id="refresh-queue" class="icon-button" title="Refresh queue">↻</button>
+            </div>
+            <div id="queue-filters" class="filter-row">
+              <button data-filter="all" class="active">All</button><button data-filter="pending">Needs review</button><button data-filter="conflicts">Conflicts</button><button data-filter="ready">Ready</button><button data-filter="drafts">Drafts</button>
+            </div>
+            <div id="queue-list" class="queue-list" aria-live="polite"></div>
+          </section>
+
+          <section id="detail-panel" class="detail-panel">
+            <div class="empty-detail"><div class="empty-icon">✓</div><h2>Select a place to begin</h2><p>Review each claim beside its source, then create a draft only when the evidence is settled.</p></div>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <dialog id="decision-dialog" class="modal">
+      <form method="dialog" id="decision-form">
+        <button class="modal-close" value="cancel" aria-label="Close">×</button>
+        <p class="eyebrow">Record decision</p><h2 id="decision-title">Accept this finding?</h2>
+        <p id="decision-evidence" class="modal-evidence"></p>
+        <label>Review note<textarea id="decision-notes" rows="4" required placeholder="What did you check, and why is this decision right?"></textarea></label>
+        <div class="modal-actions"><button value="cancel" class="button secondary">Cancel</button><button id="confirm-decision" value="default" class="button primary">Save decision</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="duplicate-dialog" class="modal duplicate-modal">
+      <form method="dialog" id="duplicate-form">
+        <button class="modal-close" value="cancel" aria-label="Close">×</button>
+        <p class="eyebrow">Duplicate check</p><h2>Choose the canonical place</h2>
+        <label class="search-box modal-search"><span>⌕</span><input id="duplicate-search" type="search" placeholder="Search candidate names" /></label>
+        <div id="duplicate-results" class="duplicate-results"></div>
+        <label>Reason<textarea id="duplicate-reason" rows="3" required>Same real-world venue confirmed during moderation.</textarea></label>
+      </form>
+    </dialog>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
