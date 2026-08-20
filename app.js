@@ -1,10 +1,10 @@
 import {
   findDuplicates, getFindings, getPlace, getSession, getStaffMembership, listCategories,
-  listQueue, markDuplicate, moderateFinding, onAuthChange, promoteCandidate, publishPlace,
+  listQueue, markDuplicate, moderateFinding, onAuthChange, promoteCandidate, publishPlace, requestPasswordReset,
   signIn, signOut,
   updatePassword,
 } from './backend.js';
-import { canCreateDraft, decisionLabel, escapeHtml, formatConfidence, isPasswordSetupUrl, queueSummary, safeHttpsUrl } from './state.js';
+import { canCreateDraft, decisionLabel, escapeHtml, formatConfidence, isPasswordSetupUrl, queueSummary, safeHttpsUrl, shouldShowPasswordSetup } from './state.js';
 
 const ui = Object.fromEntries([...document.querySelectorAll('[id]')].map((element) => [element.id.replaceAll('-', '_'), element]));
 const state = { session: null, staff: null, categories: [], queue: [], selected: null, findings: [], place: null, filter: 'all', search: '', decision: null, needsPasswordSetup: isPasswordSetupUrl(window.location.href) };
@@ -265,6 +265,24 @@ ui.login_form.addEventListener('submit', async (event) => {
   catch (error) { ui.login_error.textContent = errorMessage(error); }
   finally { setBusy(button, false); }
 });
+ui.reset_password.addEventListener('click', async () => {
+  ui.login_error.textContent = '';
+  const email = ui.email.value.trim();
+  if (!email || !ui.email.checkValidity()) {
+    ui.login_error.textContent = 'Enter your administrator email first.';
+    ui.email.focus();
+    return;
+  }
+  setBusy(ui.reset_password, true, 'Sending secure link…');
+  try {
+    await requestPasswordReset(email, `${location.origin}${location.pathname}`);
+    ui.login_error.textContent = 'Check your email for a secure password setup link.';
+  } catch (error) {
+    ui.login_error.textContent = errorMessage(error);
+  } finally {
+    setBusy(ui.reset_password, false);
+  }
+});
 ui.password_setup_form.addEventListener('submit', async (event) => {
   event.preventDefault();
   ui.password_setup_error.textContent = '';
@@ -300,5 +318,8 @@ ui.queue_filters.querySelectorAll('[data-filter]').forEach((button) => button.ad
 ui.decision_form.addEventListener('submit', saveDecision);
 ui.duplicate_search.addEventListener('input', () => { clearTimeout(ui.duplicate_search._timer); ui.duplicate_search._timer = setTimeout(loadDuplicates, 250); });
 
-onAuthChange((_event, session) => establishSession(session).catch((error) => toast(errorMessage(error), true)));
+onAuthChange((event, session) => {
+  if (shouldShowPasswordSetup(event, window.location.href)) state.needsPasswordSetup = true;
+  establishSession(session).catch((error) => toast(errorMessage(error), true));
+});
 getSession().then(establishSession).catch((error) => { ui.login_error.textContent = errorMessage(error); });
